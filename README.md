@@ -27,9 +27,9 @@ Run `rake` to run tests.
 
 ### Test Usage
 
-1. Inside of a git repo, run `hockey-gerrit`.
-2. Export a temporary environment variable for `GERRIT_REFSPEC`.
+1. Export a temporary environment variable for `GERRIT_REFSPEC`.
     * (eg. `export GERRIT_REFSPEC="this/is/a/test"`
+2. Inside of a git repo, run `hockey-gerrit`.
 3. The output will be something similar to the following: (Writes to `changelog.md`)
 
 ```
