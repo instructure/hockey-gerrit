@@ -8,6 +8,7 @@ Gem::Specification.new do |spec|
   spec.summary       = 'Gets build information from gerrit to then send to hockeyapp.'
   spec.description   = 'Generates a change log.'
   spec.license       = 'Apache-2.0'
+  spec.homepage      = 'https://github.com/instructure/hockey-gerrit'
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }

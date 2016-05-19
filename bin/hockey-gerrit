@@ -1,2 +1,5 @@
+#!/usr/bin/env ruby
+
 require_relative '../lib/hockey_gerrit'
-HockeyGerrit.new.write()
+
+HockeyGerrit.new.write
