@@ -18,6 +18,8 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 2.0.0'
 
+  spec.add_runtime_dependency 'shenzhen'
+
   spec.add_development_dependency 'bundler', '~> 1.11', '>= 1.11.0'
   spec.add_development_dependency 'byebug', '~> 8.2.2', '>= 8.2.2'
   spec.add_development_dependency 'rake', '~> 11.1.1', '>= 11.1.1'
