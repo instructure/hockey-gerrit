@@ -1,3 +1,3 @@
 class HockeyGerrit
-  VERSION = '0.0.5'.freeze unless defined? ::HockeyGerrit::VERSION
+  VERSION = '1.0.0'.freeze unless defined? ::HockeyGerrit::VERSION
 end
