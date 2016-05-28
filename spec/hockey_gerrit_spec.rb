@@ -8,12 +8,7 @@ describe HockeyGerrit do
     allow(hockey).to receive(:git_log) { 'bootstraponline: Stub git log' }
     allow(hockey).to receive(:git_commit_sha) { '123456789641603afe0572f3b4a91204791b012d' }
 
-    # Prevent WebMock from complaining we made an unregistered request in net disabled mode.
-    config_url = '{ "config_url": "https://upload.hockeyapp.net/manage/apps/123456/app_versions/9"}'
-    headers = { 'Content-Type' => 'application/json' }
-    stub_request(:post, post_url).to_return(status: 201,
-                                            body: config_url,
-                                            headers: headers)
+    stub_valid_response
   end
 
   it 'posts app to hockey' do
@@ -29,5 +24,17 @@ describe HockeyGerrit do
     save_real_post_request
 
     verify_post_request
+  end
+
+  it 'errors on no dsym' do
+    stub_valid_response
+
+    expect {
+      hockey.run(token: '123',
+                 ipa: fake_broken_path,
+                 build_url: '345',
+                 gerrit: 'a/b/c',
+                 retry: 1)
+    }.to output(/dSYM not found!/).to_stdout
   end
 end

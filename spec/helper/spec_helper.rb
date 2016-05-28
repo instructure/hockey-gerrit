@@ -8,7 +8,7 @@ require 'pry'
 
 module SpecHelper
   def path_for(path)
-    File.join(__dir__, '..', 'fixtures', path)
+    File.expand_path(File.join(__dir__, '..', 'fixtures', path))
   end
   module_function :path_for
 
@@ -18,6 +18,10 @@ module SpecHelper
 
   def dysm_path
     @dysm_path ||= path_for 'fake.app.dSYM.zip'
+  end
+
+  def fake_broken_path
+    @fake_broken_path ||= path_for 'fake_broken'
   end
 
   def upload_request_path
@@ -31,6 +35,14 @@ module SpecHelper
 
   def post_url # used by webmock
     'https://upload.hockeyapp.net/api/2/apps/upload'
+  end
+
+  def stub_valid_response
+    config_url = '{ "config_url": "https://upload.hockeyapp.net/manage/apps/123456/app_versions/9"}'
+    headers = { 'Content-Type' => 'application/json' }
+    stub_request(:post, post_url).to_return(status: 201,
+                                            body: config_url,
+                                            headers: headers)
   end
 
   def ipa_data

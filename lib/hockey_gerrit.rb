@@ -45,9 +45,11 @@ class HockeyGerrit
         commit_sha: git_commit_sha
     }
 
-    dysm = ipa.to_s.gsub('ipa', 'app.dSYM.zip')
-    if File.exist?(dysm)
-      options[:dsym_filename] = dysm
+    dsym_ext = 'app.dSYM.zip'
+    dsym = ipa.to_s.gsub('ipa', dsym_ext)
+
+    if File.exist?(dsym) && dsym.end_with?(dsym_ext)
+      options[:dsym_filename] = dsym
     else
       is_android = File.extname(ipa) == '.apk'
       puts 'dSYM not found! Unable to symbolicate crashes' unless is_android
