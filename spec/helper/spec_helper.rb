@@ -10,6 +10,7 @@ module SpecHelper
   def path_for(path)
     File.expand_path(File.join(__dir__, '..', 'fixtures', path))
   end
+
   module_function :path_for
 
   def ipa_path
@@ -27,6 +28,7 @@ module SpecHelper
   def upload_request_path
     @expected_request_path ||= path_for 'upload_request.yml'
   end
+
   module_function :upload_request_path
 
   def self.disable_net
@@ -37,12 +39,18 @@ module SpecHelper
     'https://upload.hockeyapp.net/api/2/apps/upload'
   end
 
-  def stub_valid_response
+  def stub_valid_obj
     config_url = '{ "config_url": "https://upload.hockeyapp.net/manage/apps/123456/app_versions/9"}'
     headers = { 'Content-Type' => 'application/json' }
-    stub_request(:post, post_url).to_return(status: 201,
-                                            body: config_url,
-                                            headers: headers)
+    {
+        status: 201,
+        body: config_url,
+        headers: headers
+    }
+  end
+
+  def stub_valid_response
+    stub_request(:post, post_url).to_return(stub_valid_obj)
   end
 
   def ipa_data

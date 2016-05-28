@@ -84,9 +84,10 @@ class HockeyGerrit
 
     tries = @tries # required for tries to be in scope for 'retry'
 
+    puts "Uploading #{File.basename(ipa)}"
+
     # http://support.hockeyapp.net/kb/api/api-versions#upload-version
     begin
-      puts "Uploading #{File.basename(ipa)}"
       client = Shenzhen::Plugins::HockeyApp::Client.new(token)
 
       options = configure_options
