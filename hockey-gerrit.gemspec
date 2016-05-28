@@ -3,10 +3,10 @@ require_relative 'lib/hockey_gerrit/version'
 Gem::Specification.new do |spec|
   spec.name          = 'hockey-gerrit'
   spec.version       = HockeyGerrit::VERSION
-  spec.authors       = ['Trevor Renshaw']
-  spec.email         = ['trenshaw@instructure.com']
-  spec.summary       = 'Gets build information from gerrit to then send to hockeyapp.'
-  spec.description   = 'Generates a change log.'
+  spec.authors       = ['Trevor Renshaw', 'bootstraponline']
+  spec.email         = %w[trenshaw@instructure.com code@bootstraponline.com]
+  spec.summary       = 'Uploads a build from gerrit/Jenkins to hockeyapp'
+  spec.description   = 'Uploads a build from gerrit/Jenkins to hockeyapp.'
   spec.license       = 'Apache-2.0'
   spec.homepage      = 'https://github.com/instructure/hockey-gerrit'
 
