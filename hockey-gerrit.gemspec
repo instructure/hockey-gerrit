@@ -18,8 +18,13 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 2.0.0'
 
-  spec.add_runtime_dependency 'shenzhen'
+  spec.add_runtime_dependency 'faraday', '~> 0.9.2'
+  spec.add_runtime_dependency 'faraday_middleware', '~> 0.10.0'
 
+  spec.add_development_dependency 'safe_yaml', '~> 1.0', '>= 1.0.4'
+  spec.add_development_dependency 'pry', '~> 0.10.3'
+  spec.add_development_dependency 'trace_files', '~> 1.0'
+  spec.add_development_dependency 'webmock', '~> 2.0', '>= 2.0.3'
   spec.add_development_dependency 'bundler', '~> 1.11', '>= 1.11.0'
   spec.add_development_dependency 'byebug', '~> 8.2.2', '>= 8.2.2'
   spec.add_development_dependency 'rake', '~> 11.1.1', '>= 11.1.1'

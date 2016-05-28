@@ -27,5 +27,10 @@ Metrics/ClassLength:
   Max: 150
 Metrics/CyclomaticComplexity:
   Max: 10
+Metrics/PerceivedComplexity:
+  Max: 10
 Metrics/AbcSize:
   Max: 40
+AllCops:
+  Exclude:
+    - 'lib/hockey_gerrit/shenzhen.rb'

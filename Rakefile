@@ -13,3 +13,5 @@ task test: :spec
 RuboCop::RakeTask.new do |task|
   task.options = ['-D']
 end
+
+task cop: :rubocop

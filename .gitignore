@@ -40,3 +40,5 @@ build/
 
 changelog.md
 .idea/*
+
+Gemfile.lock

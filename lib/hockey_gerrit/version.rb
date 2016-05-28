@@ -1,3 +1,3 @@
-module HockeyGerrit
-  VERSION = '0.0.4'.freeze unless defined? ::HockeyGerrit::VERSION
+class HockeyGerrit
+  VERSION = '0.0.5'.freeze unless defined? ::HockeyGerrit::VERSION
 end
