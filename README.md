@@ -6,8 +6,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/instructure/hockey-gerrit/badge.svg?branch=HEAD)](https://coveralls.io/github/instructure/hockey-gerrit?branch=HEAD)
 [![Dependency Status](https://gemnasium.com/badges/github.com/instructure/hockey-gerrit.svg)](https://gemnasium.com/github.com/instructure/hockey-gerrit)
 
-The hockey-gerrit gem saves the gerrit change number, patch number, commit message and author to a file.
-The file can then be used with hockeyapp's Jenkins plugin to publish release notes for a mobile app.
+The hockey-gerrit gem saves the gerrit change number, patch number, commit message and author to a file. The build is then uploaded to hockeyapp.
 
 ## Installation
 
@@ -29,7 +28,7 @@ Run `rake` to run tests.
 
 1. Export a temporary environment variable for `GERRIT_REFSPEC`.
     * (eg. `export GERRIT_REFSPEC="this/is/a/test"`
-2. Inside of a git repo, run `hockey-gerrit`.
+2. Inside of a git repo, run `hockey-gerrit path/to/app`.
 3. The output will be something similar to the following: (Writes to `changelog.md`)
 
 ```
