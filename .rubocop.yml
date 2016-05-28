@@ -34,3 +34,6 @@ Metrics/AbcSize:
 AllCops:
   Exclude:
     - 'lib/hockey_gerrit/shenzhen.rb'
+# RubyMine default formatting breaks this rule
+Style/SpaceInsideHashLiteralBraces:
+  Enabled: false
