@@ -41,7 +41,7 @@ module SpecHelper
 
   def stub_valid_obj
     config_url = '{ "config_url": "https://upload.hockeyapp.net/manage/apps/123456/app_versions/9"}'
-    headers = { 'Content-Type' => 'application/json' }
+    headers = {'Content-Type' => 'application/json'}
     {
         status: 201,
         body: config_url,
@@ -70,15 +70,19 @@ module SpecHelper
     expect(expected_request_string).to include(dysm_data)
 
     expected_request = ::YAML.load(expected_request_string)
-
     %i[body method uri headers].each do |attr|
       expect(current_request.send(attr)).to eq(expected_request.send(attr))
     end
   end
 
+  class << self
+    attr_accessor :current_request
+  end
+
   def current_request
-    # WebMock::RequestSignature
-    WebMock::RequestRegistry.instance.requested_signatures.hash.keys.first
+    request = SpecHelper.current_request
+    raise 'current_request is nil' unless request
+    request
   end
 
   def save_real_post_request
@@ -89,6 +93,10 @@ module SpecHelper
       raise 'Recorded upload request. Now run the test again'
     end
   end
+end
+
+WebMock.after_request do |request, _response|
+  SpecHelper.current_request = request
 end
 
 RSpec.configure do |config|
