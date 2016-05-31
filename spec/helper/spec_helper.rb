@@ -40,11 +40,15 @@ module SpecHelper
   end
 
   def post_url # used by webmock
-    "#{UPLOAD_HOCKEY_URL}/api/2/apps/upload"
+    @post_url ||= "#{UPLOAD_HOCKEY_URL}/api/2/apps/upload"
+  end
+
+  def upload_url
+    @upload_url ||= "#{RINK_HOCKEY_URL}/manage/apps/123456/app_versions/9"
   end
 
   def stub_valid_obj
-    config_url = %({ "config_url": "#{UPLOAD_HOCKEY_URL}/manage/apps/123456/app_versions/9"})
+    config_url = %({ "config_url": "#{upload_url}"})
     headers = {'Content-Type' => 'application/json'}
     {
         status: 201,
