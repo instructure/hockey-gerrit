@@ -4,12 +4,10 @@ describe HockeyGerrit do
   let(:hockey) { HockeyGerrit.new }
 
   it '#git_log' do
-    log = hockey.git_log
-    raise 'git_log fail' if log.empty?
+    expect(hockey.git_log).not_to be_empty
   end
 
   it '#git_commit_sha' do
-    log = hockey.git_commit_sha
-    raise 'git_commit_sha fail' if log.empty?
+    expect(hockey.git_commit_sha).not_to be_empty
   end
 end
