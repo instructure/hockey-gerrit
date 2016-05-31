@@ -24,7 +24,7 @@ describe HockeyGerrit do
 
     hockey_run
 
-    expected_url = 'https://rink.hockeyapp.net/manage/apps/123456/app_versions/9'
+    expected_url = "#{RINK_HOCKEY_URL}/manage/apps/123456/app_versions/9"
     expect(hockey.upload_url).to eq(expected_url)
 
     save_real_post_request
@@ -54,7 +54,7 @@ Retrying upload. 5 attempts remaining...
 Retrying upload. 4 attempts remaining...
 Retrying upload. 3 attempts remaining...
 Retrying upload. 2 attempts remaining...
-Build uploaded to: https://rink.hockeyapp.net/manage/apps/123456/app_versions/9
+Build uploaded to: #{RINK_HOCKEY_URL}/manage/apps/123456/app_versions/9
 S
 
     expect { hockey_run(retry: 5) }.to output(expected).to_stdout

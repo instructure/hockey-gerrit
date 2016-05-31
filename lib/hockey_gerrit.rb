@@ -57,10 +57,13 @@ class HockeyGerrit
     options
   end
 
+  UPLOAD_HOCKEY_URL = 'https://upload.hockeyapp.net'.freeze
+  RINK_HOCKEY_URL = 'https://rink.hockeyapp.net'.freeze
+
   def hockey_url(response)
     config_url = response.body ? response.body['config_url'] : nil
     raise 'Missing config_url' unless config_url && !config_url.empty?
-    config_url.gsub!('https://upload.hockeyapp.net/', 'https://rink.hockeyapp.net/')
+    config_url.gsub!(UPLOAD_HOCKEY_URL, RINK_HOCKEY_URL)
     @upload_url = config_url
     config_url
   end

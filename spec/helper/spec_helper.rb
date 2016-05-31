@@ -6,6 +6,10 @@ require_relative '../../lib/hockey_gerrit'
 require 'webmock/rspec'
 require 'pry'
 
+# Promote constants to globals so we don't have to prefix them in every test/helper method.
+UPLOAD_HOCKEY_URL = HockeyGerrit::UPLOAD_HOCKEY_URL
+RINK_HOCKEY_URL = HockeyGerrit::RINK_HOCKEY_URL
+
 module SpecHelper
   def path_for(path)
     File.expand_path(File.join(__dir__, '..', 'fixtures', path))
@@ -36,11 +40,11 @@ module SpecHelper
   end
 
   def post_url # used by webmock
-    'https://upload.hockeyapp.net/api/2/apps/upload'
+    "#{UPLOAD_HOCKEY_URL}/api/2/apps/upload"
   end
 
   def stub_valid_obj
-    config_url = '{ "config_url": "https://upload.hockeyapp.net/manage/apps/123456/app_versions/9"}'
+    config_url = %({ "config_url": "#{UPLOAD_HOCKEY_URL}/manage/apps/123456/app_versions/9"})
     headers = {'Content-Type' => 'application/json'}
     {
         status: 201,
