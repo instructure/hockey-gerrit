@@ -58,8 +58,8 @@ class HockeyGerrit
   end
 
   def hockey_url(response)
-    config_url = response.body ? response.body['config_url'] : ''
-    raise 'Missing config_url' unless config_url
+    config_url = response.body ? response.body['config_url'] : nil
+    raise 'Missing config_url' unless config_url && !config_url.empty?
     config_url.gsub!('https://upload.hockeyapp.net/', 'https://rink.hockeyapp.net/')
     @upload_url = config_url
     config_url
