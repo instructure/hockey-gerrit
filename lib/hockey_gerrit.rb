@@ -1,103 +1,107 @@
 require_relative 'hockey_gerrit/version'
 require 'English'
 
-# Fix undefined method `command' for main:Object
-# shenzhen depends on commander gem.
-def command(_param)
-end
-
 require 'rubygems'
-require 'shenzhen'
-require 'shenzhen/plugins/hockeyapp'
+require_relative 'hockey_gerrit/shenzhen'
 
-module HockeyGerrit
-  class << self
-    def gerrit_refspec(gerrit = ENV['GERRIT_REFSPEC'])
-      raise 'Must set GERRIT_REFSPEC' unless gerrit && !gerrit.empty?
-      gerrit_split = gerrit.split('/')
-      raise 'GERRIT_REFSPEC is invalid' unless gerrit_split.size >= 2
-      change, patch = gerrit_split[-2..-1]
-      "g#{change},#{patch}"
+class HockeyGerrit
+  attr_reader :token, :ipa, :build_url, :gerrit_env, :tries, :upload_url
+
+  def gerrit_refspec
+    raise 'Must set GERRIT_REFSPEC' unless gerrit_env && !gerrit_env.empty?
+    gerrit_split = gerrit_env.split('/')
+    raise 'GERRIT_REFSPEC is invalid' unless gerrit_split.size >= 2
+    change, patch = gerrit_split[-2..-1]
+    "g#{change},#{patch}"
+  end
+
+  def git_log
+    git_log = `git log --reverse -1 --format="%an: %s"`
+    raise 'command failed' unless $CHILD_STATUS.success?
+    git_log
+  end
+
+  def git_commit_sha
+    sha = `git rev-parse --verify HEAD`
+    raise 'command failed' unless $CHILD_STATUS.success?
+    sha
+  end
+
+  def configure_options
+    gerrit = gerrit_refspec
+    log = git_log
+    release_notes = "#{gerrit}\n\n#{log}"
+
+    markdown = 1
+    available_for_download = 2
+    dont_notify = 0
+    options = {
+        notes_type: markdown,
+        notes: release_notes,
+        notify: dont_notify,
+        ipa: ipa,
+        status: available_for_download,
+        build_server_url: build_url,
+        commit_sha: git_commit_sha
+    }
+
+    dsym_ext = 'app.dSYM.zip'
+    dsym = ipa.to_s.gsub('ipa', dsym_ext)
+
+    if File.exist?(dsym) && dsym.end_with?(dsym_ext)
+      options[:dsym_filename] = dsym
+    else
+      is_android = File.extname(ipa) == '.apk'
+      puts 'dSYM not found! Unable to symbolicate crashes' unless is_android
     end
+    options
+  end
 
-    def git_log
-      git_log = `git log --reverse -1 --format="%an: %s"`
-      raise 'command failed' unless $CHILD_STATUS.success?
-      git_log
-    end
+  UPLOAD_HOCKEY_URL = 'https://upload.hockeyapp.net'.freeze
+  RINK_HOCKEY_URL = 'https://rink.hockeyapp.net'.freeze
 
-    def git_commit_sha
-      sha = `git rev-parse --verify HEAD`
-      raise 'command failed' unless $CHILD_STATUS.success?
-      sha
-    end
+  def hockey_url(response)
+    config_url = response.body ? response.body['config_url'] : nil
+    raise 'Missing config_url' unless config_url && !config_url.empty?
+    config_url.gsub!(UPLOAD_HOCKEY_URL, RINK_HOCKEY_URL)
+    @upload_url = config_url
+    config_url
+  end
 
-    HOCKEY_TOKEN = ENV['HOCKEY_TOKEN']
-    IPA = ARGV.first
-    BUILD_URL = ENV['BUILD_URL']
+  def validate_args(opts)
+    @token = opts.fetch :token, ENV['token']
+    @ipa = opts.fetch :ipa, ARGV.first
+    @build_url = opts.fetch :build_url, ENV['build_url']
+    @gerrit_env = opts.fetch :gerrit, ENV['GERRIT_REFSPEC']
+    @tries = opts.fetch :retry, 5
 
-    def configure_options
-      gerrit = gerrit_refspec
-      log = git_log
-      release_notes = "#{gerrit}\n#{log}"
+    raise 'Must set token' unless token && token.is_a?(String) && !token.empty?
+    raise 'Must provide path to ipa' unless ipa
+    raise 'ipa doesn\'t exist' unless File.exist?(ipa)
+    raise 'Must provide build_url' unless build_url
+    raise 'Retry must be an int >= 1' unless tries && tries.is_a?(Integer) && tries >= 1
+  end
 
-      markdown = 1
-      available_for_download = 2
-      dont_notify = 0
-      options = {
-          notes_type: markdown,
-          notes: release_notes,
-          notify: dont_notify,
-          ipa: IPA,
-          status: available_for_download,
-          build_server_url: BUILD_URL,
-          commit_sha: git_commit_sha
-      }
+  def run(opts = {})
+    validate_args opts
 
-      dysm = IPA.to_s.gsub('ipa', 'app.dSYM.zip')
-      if File.exist?(dysm)
-        options[:dsym] = dysm
-      else
-        is_android = File.extname(IPA) == '.apk'
-        puts 'dSYM not found! Unable to symbolicate crashes' unless is_android
-      end
-      options
-    end
+    tries = @tries # required for tries to be in scope for 'retry'
 
-    def hockey_url(response)
-      config_url = response.body ? response.body['config_url'] : ''
-      raise 'Missing config_url' unless config_url
-      config_url.gsub!('https://upload.hockeyapp.net/', 'https://rink.hockeyapp.net/')
-      config_url
-    end
+    puts "Uploading #{File.basename(ipa)}"
 
-    def validate_args
-      raise 'Must set HOCKEY_TOKEN' unless HOCKEY_TOKEN
-      raise 'Must provide path to IPA' unless IPA
-      raise 'IPA doesn\'t exist' unless File.exist?(IPA)
-      raise 'Must provide BUILD_URL' unless BUILD_URL
-    end
+    # http://support.hockeyapp.net/kb/api/api-versions#upload-version
+    begin
+      client = Shenzhen::Plugins::HockeyApp::Client.new(token)
 
-    def run
-      validate_args
+      options = configure_options
+      response = client.upload_build(ipa, options)
 
-      tries = 5
-
-      # http://support.hockeyapp.net/kb/api/api-versions#upload-version
-      begin
-        puts "Uploading #{File.basename(IPA)}"
-        client = Shenzhen::Plugins::HockeyApp::Client.new(HOCKEY_TOKEN)
-
-        options = configure_options
-        response = client.upload_build(IPA, options)
-
-        raise "Invalid response: #{response}" unless response.status == 201
-        puts "Build uploaded to: #{hockey_url(response)}"
-      rescue
-        puts "Retrying upload. #{tries} attempts remaining..."
-        retry unless (tries -= 1).zero?
-        raise
-      end
+      raise "Invalid response: #{response.body}" unless response.status == 201
+      puts "Build uploaded to: #{hockey_url(response)}"
+    rescue
+      puts "Retrying upload. #{tries} attempts remaining..." if tries > 1
+      retry unless (tries -= 1).zero?
+      raise
     end
   end
 end

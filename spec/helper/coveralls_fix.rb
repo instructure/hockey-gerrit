@@ -1,3 +1,7 @@
+# exclude from coverage:
+require_relative '../../lib/hockey_gerrit/shenzhen'
+require_relative 'trace_helper'
+
 require 'coveralls'
 
 module Coveralls
@@ -11,10 +15,3 @@ module Coveralls
 end if ENV['CI']
 
 Coveralls.wear!
-
-require_relative '../lib/hockey_gerrit'
-
-RSpec.configure do |c|
-  c.raise_errors_for_deprecations!
-  c.color = true
-end

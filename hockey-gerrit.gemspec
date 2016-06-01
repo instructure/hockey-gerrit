@@ -3,10 +3,10 @@ require_relative 'lib/hockey_gerrit/version'
 Gem::Specification.new do |spec|
   spec.name          = 'hockey-gerrit'
   spec.version       = HockeyGerrit::VERSION
-  spec.authors       = ['Trevor Renshaw']
-  spec.email         = ['trenshaw@instructure.com']
-  spec.summary       = 'Gets build information from gerrit to then send to hockeyapp.'
-  spec.description   = 'Generates a change log.'
+  spec.authors       = ['Trevor Renshaw', 'bootstraponline']
+  spec.email         = %w[trenshaw@instructure.com code@bootstraponline.com]
+  spec.summary       = 'Uploads a build from gerrit/Jenkins to hockeyapp'
+  spec.description   = 'Uploads a build from gerrit/Jenkins to hockeyapp.'
   spec.license       = 'Apache-2.0'
   spec.homepage      = 'https://github.com/instructure/hockey-gerrit'
 
@@ -18,8 +18,13 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 2.0.0'
 
-  spec.add_runtime_dependency 'shenzhen'
+  spec.add_runtime_dependency 'faraday', '~> 0.9.2'
+  spec.add_runtime_dependency 'faraday_middleware', '~> 0.10.0'
 
+  spec.add_development_dependency 'safe_yaml', '~> 1.0', '>= 1.0.4'
+  spec.add_development_dependency 'pry', '~> 0.10.3'
+  spec.add_development_dependency 'trace_files', '~> 1.0'
+  spec.add_development_dependency 'webmock', '~> 2.0', '>= 2.0.3'
   spec.add_development_dependency 'bundler', '~> 1.11', '>= 1.11.0'
   spec.add_development_dependency 'byebug', '~> 8.2.2', '>= 8.2.2'
   spec.add_development_dependency 'rake', '~> 11.1.1', '>= 11.1.1'
